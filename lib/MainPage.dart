@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_app/communication.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import './SelectBondedDevicePage.dart';
 import './ChatPage.dart';
 //import './ChatPage2.dart';
-
 
 class MainPage extends StatefulWidget {
   @override
@@ -22,6 +22,7 @@ class _MainPage extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    _requestBluetoothPermissions();
 
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -108,7 +109,7 @@ class _MainPage extends State<MainPage> {
             ListTile(
               title: const Text('Bluetooth status'),
               subtitle: Text(_bluetoothState.toString()),
-              trailing: RaisedButton(
+              trailing: ElevatedButton(
                 child: const Text('Settings'),
                 onPressed: () {
                   FlutterBluetoothSerial.instance.openSettings();
@@ -127,7 +128,7 @@ class _MainPage extends State<MainPage> {
             Divider(),
             ListTile(title: const Text('Devices discovery and connection')),
             ListTile(
-              title: RaisedButton(
+              title: ElevatedButton(
                 child: const Text('Connect to paired device to chat'),
                 onPressed: () async {
                   final BluetoothDevice selectedDevice =
@@ -162,5 +163,36 @@ class _MainPage extends State<MainPage> {
         },
       ),
     );
+  }
+
+  Future<void> _requestBluetoothPermissions() async {
+    // Declaration and call of all needed permissions
+    PermissionStatus statusBluetooth = await Permission.bluetooth.status;
+    PermissionStatus statusLocation = await Permission.location.status;
+    PermissionStatus statusBluetoothConnect =
+        await Permission.bluetoothConnect.status;
+    PermissionStatus statusScan = await Permission.bluetoothScan.status;
+    PermissionStatus statusAdvertise =
+        await Permission.bluetoothAdvertise.status;
+
+    // Check if all permissions have been given and wait until they have
+    if (statusBluetooth.isDenied ||
+        statusLocation.isDenied ||
+        statusBluetoothConnect.isDenied ||
+        statusScan.isDenied ||
+        statusAdvertise.isDenied) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.bluetooth,
+        Permission.location,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan,
+        Permission.bluetoothAdvertise
+      ].request();
+      print(statuses[Permission.bluetooth]);
+      print(statuses[Permission.location]);
+      print(statuses[Permission.bluetoothConnect]);
+      print(statuses[Permission.bluetoothScan]);
+      print(statuses[Permission.bluetoothAdvertise]);
+    }
   }
 }
