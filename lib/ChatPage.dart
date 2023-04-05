@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_app/communication.dart';
+import 'package:flutter_blue_app/joystick.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class ChatPage extends StatefulWidget {
@@ -84,6 +86,12 @@ class _ChatPage extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    return (isConnecting
+        ? Text('Connecting chat to ' + widget.server.name + '...')
+        : isConnected
+            ? Joystick(onPressed: _sendMessage)
+            : Text('Chat log with ' + widget.server.name));
+    /* 
     final List<Row> list = messages.map((_message) {
       return Row(
         children: <Widget>[
@@ -157,7 +165,7 @@ class _ChatPage extends State<ChatPage> {
           ],
         ),
       ),
-    );
+    ); */
   }
 
   void _onDataReceived(Uint8List data) {
