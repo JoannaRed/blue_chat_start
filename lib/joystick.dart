@@ -1,16 +1,56 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_app/communication.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class Joystick extends StatefulWidget {
-  const Joystick({Key key, this.onPressed}) : super(key: key);
+  Joystick({Key key, this.server}) : super(key: key);
 
-  final Function onPressed;
+  final BluetoothDevice server;
+
+  //final Function onPressed;
 
   @override
   State<Joystick> createState() => _JoystickState();
 }
 
 class _JoystickState extends State<Joystick> {
+  BluetoothConnection connection;
+  bool isConnecting = true;
+  bool get isConnected => connection != null && connection.isConnected;
+
+  bool isDisconnecting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    BluetoothConnection.toAddress(widget.server.address).then((_connection) {
+      print('Connected to the device');
+      connection = _connection;
+      setState(() {
+        isConnecting = false;
+        isDisconnecting = false;
+      });
+    }).catchError((error) {
+      print('Cannot connect, exception occured');
+      print(error);
+    });
+  }
+
+  void _sendMessage(String text) async {
+    text = text.trim();
+
+    if (text.length > 0) {
+      try {
+        connection.output.add(utf8.encode(text + "\r\n"));
+        await connection.output.allSent;
+      } catch (e) {
+        // Ignore error, but notify state
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +62,7 @@ class _JoystickState extends State<Joystick> {
         IconButton(
           icon: Icon(Icons.arrow_upward),
           onPressed: () {
-            widget.onPressed('forward');
+            _sendMessage('forward');
             // Communication.sendMessage('forward');
             print('forward');
           },
@@ -31,6 +71,7 @@ class _JoystickState extends State<Joystick> {
         IconButton(
           icon: Icon(Icons.arrow_left),
           onPressed: () {
+            _sendMessage('left');
             print('left');
           },
         ),
@@ -38,6 +79,7 @@ class _JoystickState extends State<Joystick> {
         IconButton(
           icon: Icon(Icons.arrow_right),
           onPressed: () {
+            _sendMessage('right');
             print('right');
           },
         ),
@@ -45,6 +87,7 @@ class _JoystickState extends State<Joystick> {
         IconButton(
           icon: Icon(Icons.arrow_downward),
           onPressed: () {
+            _sendMessage('stop');
             print('stop');
           },
         ),

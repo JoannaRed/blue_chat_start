@@ -89,7 +89,7 @@ class _ChatPage extends State<ChatPage> {
     return (isConnecting
         ? Text('Connecting chat to ' + widget.server.name + '...')
         : isConnected
-            ? Joystick(onPressed: _sendMessage)
+            ? Joystick(server: widget.server)
             : Text('Chat log with ' + widget.server.name));
     /* 
     final List<Row> list = messages.map((_message) {

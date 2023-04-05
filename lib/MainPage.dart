@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_app/communication.dart';
+import 'package:flutter_blue_app/joystick.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -159,7 +161,7 @@ class _MainPage extends State<MainPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return ChatPage(server: server);
+          return Joystick(server: server);
         },
       ),
     );
