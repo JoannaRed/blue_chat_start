@@ -151,6 +151,28 @@ class _MainPage extends State<MainPage> {
                 },
               ),
             ),
+            ListTile(
+              title: ElevatedButton(
+                child: const Text('Control your buggy'),
+                onPressed: () async {
+                  final BluetoothDevice selectedDevice =
+                      await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return SelectBondedDevicePage(checkAvailability: false);
+                      },
+                    ),
+                  );
+
+                  if (selectedDevice != null) {
+                    print('Connect -> selected ' + selectedDevice.address);
+                    _startJoystick(context, selectedDevice);
+                  } else {
+                    print('Connect -> no device selected');
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -158,6 +180,16 @@ class _MainPage extends State<MainPage> {
   }
 
   void _startChat(BuildContext context, BluetoothDevice server) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return ChatPage(server: server);
+        },
+      ),
+    );
+  }
+
+  void _startJoystick(BuildContext context, BluetoothDevice server) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
