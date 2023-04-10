@@ -166,7 +166,7 @@ class _MainPage extends State<MainPage> {
 
                   if (selectedDevice != null) {
                     print('Connect -> selected ' + selectedDevice.address);
-                    _startJoystick(context, selectedDevice);
+                    // _startJoystick(context, selectedDevice);
                   } else {
                     print('Connect -> no device selected');
                   }
@@ -189,7 +189,7 @@ class _MainPage extends State<MainPage> {
     );
   }
 
-  void _startJoystick(BuildContext context, BluetoothDevice server) {
+  /* void _startJoystick(BuildContext context, BluetoothDevice server) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
@@ -197,7 +197,7 @@ class _MainPage extends State<MainPage> {
         },
       ),
     );
-  }
+  } */
 
   Future<void> _requestBluetoothPermissions() async {
     // Declaration and call of all needed permissions
